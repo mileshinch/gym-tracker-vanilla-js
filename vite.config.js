@@ -6,6 +6,7 @@ export default defineConfig({
       input: {
         main: 'index.html',
         workout: 'workout.html',
+        review: 'see-progress.html'
       },
     },
   },

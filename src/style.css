@@ -1,0 +1,22 @@
+.major-link {
+    display: block;
+    border: 1px solid red;
+    height: 300px;
+    margin: 20px;
+}
+
+.major-btn {
+    width: 100%;
+    height: 100%;
+    font-size: clamp(1rem, 5vw, 2.5rem);
+}
+
+.form-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.finish-btn {
+    margin-top: 50px;
+}

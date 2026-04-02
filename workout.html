@@ -4,15 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Workout</title>
+    <link rel="stylesheet" href="src/style.css">
    </head>
    <body>
        <form id="workout-form" class="hidden">
-      <input id="exercise" name='exercise' placeholder="Exercise" required />
+        <div class="form-container">
+<input id="exercise" name='exercise' placeholder="Exercise" required />
       <input type="number" name="weight" placeholder="Weight" required>
       <button type="submit">Add</button>
+        </div>
+      
     </form>
     <a href="/index">
-<button id="finishWorkoutBtn">Finish Workout</button>
+<button class="finish-btn" id="finishWorkoutBtn">Finish Workout</button>
     </a>
     
     <script type="module" src="/src/main.js"></script>
