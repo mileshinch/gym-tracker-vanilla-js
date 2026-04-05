@@ -1,57 +1,77 @@
 import { supabase } from './supabaseClient.js';
 
-const { data, error } = await supabase
+const { data } = await supabase
   .from('workout_exercises')
-  .select('*')
+  .select(`
+    weight,
+    workout_id,
+    exercise_id,
+    exercises ( name )
+  `)
+  .order('workout_id', { ascending: true })
 
-  if (error) {
-  console.error(error)
-} else {
-  console.log(data)
-}
+const grouped = {}
 
-const exerciseId = 2
+data.forEach(row => {
+  if (!grouped[row.exercise_id]) {
+    grouped[row.exercise_id] = []
+  }
+  grouped[row.exercise_id].push(row)
+})
 
-const { data: exerciseData } = await supabase
-  .from('exercises')
-  .select('name')
-  .eq('id', exerciseId)
-  .single()
+const container = document.getElementById('charts')
 
-const exerciseName = exerciseData.name
+container.style.display = 'flex'
+container.style.flexWrap = 'wrap'
+container.style.gap = '20px'
 
-const filtered = data
-  .filter(row => row.exercise_id === exerciseId)
-  .sort((a, b) => a.workout_id - b.workout_id)
+Object.entries(grouped).forEach(([exerciseId, rows]) => {
+const wrapper = document.createElement('div')
+wrapper.style.width = '400px'
+wrapper.style.height = '250px'
+wrapper.style.marginBottom = '30px'
 
-const labels = filtered.map(d => `Workout ${d.workout_id}`)
-const weights = filtered.map(d => d.weight)
+const canvas = document.createElement('canvas')
 
-const ctx = document.getElementById('chart')
+wrapper.appendChild(canvas)
+container.appendChild(wrapper)
 
-new Chart(ctx, {
-  type: 'line',
-  data: {
-    labels: labels,
-    datasets: [{
-      label: 'Weight lifted',
-      data: weights,
-      tension: 0.3,          // smooth line
-      fill: false            // no area fill
-    }]
-  },
-  options: {
-    responsive: true,
+  // prepare data
+  const labels = rows.map(r => `Workout ${r.workout_id}`)
+  const weights = rows.map(r => r.weight)
+  const name = rows[0].exercises.name
+
+  // draw chart
+  new Chart(canvas, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [{
+        label: 'Weight',
+        data: weights,
+        showLine: false,
+        tension: 0.3,
+        pointRadius: 6,
+  pointHoverRadius: 8
+      }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
     scales: {
       y: {
         beginAtZero: true
       }
     },
-    plugins: {
-      title: {
-        display: true,
-        text: exerciseName
+      plugins: {
+        legend: {
+      display: false
+    },
+        title: {
+          display: true,
+          text: name
+        }
       }
     }
-  }
+  })
 })
